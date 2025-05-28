@@ -1,0 +1,16 @@
+# Binary files
+*.mp4
+*.jpg
+*.png
+*.avi
+*.mov
+
+# Python cache
+__pycache__/
+*.pyc
+
+# Data directories
+data/
+MiDaS/
+temp_midas/
+test_output/
