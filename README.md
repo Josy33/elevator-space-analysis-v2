@@ -46,9 +46,7 @@ elevator-space-analysis-v2/
 - GPU optional but recommended for faster processing
 
 ### Step 1: Clone the Repository
-```bash
-git clone https://github.com/Josy33/elevator-space-analysis-v2.git
-cd elevator-space-analysis-v2
+```
 ```
 
 ### Step 2: Install Dependencies
