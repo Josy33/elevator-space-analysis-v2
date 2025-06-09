@@ -227,6 +227,14 @@ python space_analyzer.py \
 - **Test Dataset**: 3,393 images
 - **Processing Speed**: ~47 frames/second on standard hardware
 
+## 🤝 Contributing
+
+1. Fork the repository
+2. Create a feature branch (`git checkout -b feature/improvement`)
+3. Commit your changes (`git commit -am 'Add new feature'`)
+4. Push to the branch (`git push origin feature/improvement`)
+5. Create a Pull Request
+
 ## 📄 License
 
 This project is licensed under the MIT License - see the [LICENSE](LICENSE) file for details.
@@ -234,8 +242,8 @@ This project is licensed under the MIT License - see the [LICENSE](LICENSE) file
 ## 📞 Support
 
 For technical support or commercial deployment inquiries:
-- Create an issue on RidwanTech's Site
-- Contact: 07384108349
+- Create an issue on GitHub
+- Contact: [Your contact information]
 
 ## 🎯 Future Enhancements
 
@@ -247,4 +255,4 @@ For technical support or commercial deployment inquiries:
 
 ---
 
-**Built with**: Python, PyTorch, OpenCV, MiDaS, and Computer Vision 
+**Built with**: Python, PyTorch, OpenCV, MiDaS, and Computer Vision ❤️

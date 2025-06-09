@@ -17,13 +17,6 @@ import torchvision.transforms as transforms
 from sklearn.model_selection import train_test_split
 from sklearn.metrics import accuracy_score, precision_score, recall_score, f1_score, confusion_matrix
 
-import os
-print("=== DEBUG INFO ===")
-print(f"Current directory: {os.getcwd()}")
-print(f"Data path exists: {os.path.exists('data/output/depth_estimation')}")
-print(f"Empty dir exists: {os.path.exists('data/output/depth_estimation/empty')}")
-print(f"Occupied dir exists: {os.path.exists('data/output/depth_estimation/occupied')}")
-
 # Check for actual files
 import glob
 empty_files = glob.glob("data/output/depth_estimation/empty/*_depth.jpg")
