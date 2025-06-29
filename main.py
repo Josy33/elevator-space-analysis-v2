@@ -1,5 +1,10 @@
+import sys
+import os
+
+sys.path.append(os.path.join(os.path.dirname(__file__), "src"))
+
 import cv2
-from src.inference.depth_estimation import DepthEstimator
+from inference.depth_estimation import DepthEstimator
 # Later we'll import other components like:
 # from src.inference.object_detection import ObjectDetector
 # from src.api.server import app

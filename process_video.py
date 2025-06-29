@@ -5,74 +5,46 @@ from tqdm import tqdm
 
 class DataCollector:
     def __init__(self, base_path="data"):
-        """
-        Initialize the data collector.
-        
-        Args:
-            base_path (str): Base path for data storage
-        """
+        """Initialize the data collector."""
         self.base_path = base_path
         self.raw_path = os.path.join(base_path, "raw")
         self.images_path = os.path.join(self.raw_path, "images")
         self.videos_path = os.path.join(self.raw_path, "videos")
         
-        # Create base directories
-        for category in ["empty", "occupied", "test"]:
-            # Create directories for videos (input)
-            video_category_path = os.path.join(self.videos_path, category)
-            os.makedirs(video_category_path, exist_ok=True)
-            
-            # Create directories for extracted frames (output)
-            image_category_path = os.path.join(self.images_path, category)
-            os.makedirs(image_category_path, exist_ok=True)
-            
-            print(f"Created directories:")
-            print(f"  Videos: {video_category_path}")
-            print(f"  Images: {image_category_path}")
+        # Create directories for new 3-class structure
+        self.categories = ["empty", "partially_occupied", "full", "test"]
+        for category in self.categories:
+            os.makedirs(os.path.join(self.videos_path, category), exist_ok=True)
+            os.makedirs(os.path.join(self.images_path, category), exist_ok=True)
     
     def process_video(self, video_path, category="test", frame_interval=30):
-        """
-        Extract frames from a video file.
-        
-        Args:
-            video_path (str): Path to video file
-            category (str): One of ["empty", "occupied", "test"]
-            frame_interval (int): Extract every Nth frame
-        """
-        assert category in ["empty", "occupied", "test"], "Invalid category"
+        """Extract frames from a video file."""
         save_path = os.path.join(self.images_path, category)
-        
-        # Get video filename without extension
         video_name = os.path.splitext(os.path.basename(video_path))[0]
         
-        print(f"Processing video: {video_path}")
-        print(f"Saving frames to: {save_path}")
+        print(f"\nProcessing: {os.path.basename(video_path)}")
         
-        # Open video
         cap = cv2.VideoCapture(video_path)
         if not cap.isOpened():
-            print(f"ERROR: Could not open video: {video_path}")
-            return
+            print(f"ERROR: Could not open video")
+            return 0
             
-        # Get video info
         frame_count = int(cap.get(cv2.CAP_PROP_FRAME_COUNT))
         fps = cap.get(cv2.CAP_PROP_FPS)
-        duration = frame_count / fps
         
-        print(f"Video info: {frame_count} frames, {fps:.2f} FPS, {duration:.2f} seconds")
-        print(f"Extracting every {frame_interval}th frame...")
+        print(f"  Frames: {frame_count}, FPS: {fps:.1f}")
+        print(f"  Extracting every {frame_interval}th frame...")
         
         frames_saved = 0
         frame_idx = 0
         
         try:
-            with tqdm(total=frame_count, desc=f"Extracting frames from {video_name}") as pbar:
+            with tqdm(total=frame_count, desc="Extracting", leave=False) as pbar:
                 while True:
                     ret, frame = cap.read()
                     if not ret:
                         break
                     
-                    # Save every Nth frame
                     if frame_idx % frame_interval == 0:
                         filename = os.path.join(save_path, f"{category}_{video_name}_{frame_idx:06d}.jpg")
                         cv2.imwrite(filename, frame)
@@ -84,69 +56,57 @@ class DataCollector:
         finally:
             cap.release()
         
-        print(f"Saved {frames_saved} frames to {save_path}")
+        print(f"  Saved: {frames_saved} frames")
         return frames_saved
 
-def collect_video_paths(videos_dir):
-    """Collect all video files from the videos directory"""
-    videos = []
-    
-    for category in ["empty", "occupied", "test"]:
-        category_dir = os.path.join(videos_dir, category)
-        
-        if not os.path.exists(category_dir):
-            print(f"WARNING: Directory not found: {category_dir}")
-            continue
-        
-        # Find all video files
-        video_files = []
-        for ext in ['mp4', 'avi', 'mov', 'mkv']:
-            video_files.extend(glob.glob(os.path.join(category_dir, f"*.{ext}")))
-        
-        if not video_files:
-            print(f"WARNING: No video files found in {category_dir}")
-            continue
-        
-        print(f"Found {len(video_files)} videos in {category_dir}")
-        for video_path in video_files:
-            videos.append((video_path, category))
-    
-    return videos
-
 def main():
-    print(f"Working directory: {os.getcwd()}")
-    # Initialize data collector
-    collector = DataCollector(base_path="C:\\Users\\ephra\\Elevator-Analysis-Project\\data")
+    print("=== FRAME EXTRACTION FROM VIDEOS (3-CLASS) ===\n")
     
-    # Find videos
+    collector = DataCollector(base_path="data")
     videos_dir = os.path.join(collector.raw_path, "videos")
-    videos = collect_video_paths(videos_dir)
     
-    if not videos:
-        print("\nNo videos found to process.")
-        print("Please make sure your videos are in the following directories:")
-        print(f"  {os.path.join(videos_dir, 'empty')}")
-        print(f"  {os.path.join(videos_dir, 'occupied')}")
-        print(f"  {os.path.join(videos_dir, 'test')}")
+    # Collect all videos from new categories
+    all_videos = []
+    category_stats = {}
+    
+    for category in collector.categories:
+        category_dir = os.path.join(videos_dir, category)
+        video_files = glob.glob(os.path.join(category_dir, "*.mp4"))
+        video_files.extend(glob.glob(os.path.join(category_dir, "*.MP4")))
+        video_files.extend(glob.glob(os.path.join(category_dir, "*.mov")))
+        video_files.extend(glob.glob(os.path.join(category_dir, "*.MOV")))
+        
+        category_stats[category] = len(video_files)
+        print(f"{category}: {len(video_files)} videos")
+        for video in video_files:
+            all_videos.append((video, category))
+    
+    if not all_videos:
+        print("\nNo videos found!")
+        print("Make sure videos are in:")
+        for category in collector.categories:
+            print(f"  - {os.path.join(videos_dir, category)}/")
         return
     
-    print(f"\nFound {len(videos)} videos to process.")
+    print(f"\nTotal videos to process: {len(all_videos)}")
+    print("-" * 40)
     
-    # Process each video
+    # Process all videos
     total_frames = 0
-    for video_path, category in videos:
+    frames_by_category = {cat: 0 for cat in collector.categories}
+    
+    for video_path, category in all_videos:
         frames = collector.process_video(video_path, category)
-        if frames:
-            total_frames += frames
+        total_frames += frames
+        frames_by_category[category] += frames
     
-    print(f"\nProcessing complete! Extracted {total_frames} frames total.")
-    print(f"Frames are saved in: {collector.images_path}")
-    
-    # Print next steps
-    print("\nNext steps:")
-    print("1. Check extracted frames in the directories above")
-    print("2. Run augment_data.py to create augmented versions of these frames")
-    print("3. Test the depth estimation model with these frames")
+    print("\n" + "=" * 40)
+    print(f"COMPLETE! Extracted {total_frames} frames total")
+    print("\nFrames per category:")
+    for category, count in frames_by_category.items():
+        print(f"  {category}: {count} frames")
+    print(f"\nLocation: {collector.images_path}")
+    print("\nNext: Run simple_augment.py")
 
 if __name__ == "__main__":
     main()

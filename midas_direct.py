@@ -13,7 +13,7 @@ from tqdm import tqdm
 print("===== MIDAS DIRECT RUNNER =====")
 
 # Set paths
-midas_path = "C:\\Users\\ephra\\OneDrive\\Documents\\Desktop\\MiDaS-master\\MiDaS-master"
+midas_path = "C:\\Users\\ephra\\OneDrive\\Documents\\Desktop\\Elevator-Analysis-Clean\\MiDaS"
 data_base = "data/augmented/images"  # Or "data/raw/images"
 output_base = "data/output/depth_estimation"
 

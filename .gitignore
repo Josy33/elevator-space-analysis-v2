@@ -1,16 +1,24 @@
-# Binary files
+# Ignore data folders
+data/
+augmented/
+output/
+raw/
+temp_midas/
+test_output/
+
+# Ignore videos/images
 *.mp4
 *.jpg
 *.png
 *.avi
 *.mov
 
-# Python cache
+# Python/IDE files
 __pycache__/
 *.pyc
+.venv/
+venv/
+.vscode/
+.idea/
 
-# Data directories
-data/
-MiDaS/
-temp_midas/
-test_output/
+
