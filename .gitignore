@@ -21,4 +21,9 @@ venv/
 .vscode/
 .idea/
 
-
+# Ignore data folder but allow model files
+data/
+!data/output/
+!data/output/occupancy/
+!data/output/occupancy/best_model_enhanced.pth
+!data/output/occupancy/feature_scaler.pkl
